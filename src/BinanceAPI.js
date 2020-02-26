@@ -23,6 +23,15 @@ class BinanceAPI {
 
     /**
      *
+     * @param binanceWorker
+     * @returns {Promise<*>}
+     */
+    createWorker(...binanceWorker) {
+        return Promise.all(binanceWorker.map(worker => worker.load(this)));
+    }
+
+    /**
+     *
      * @param symbols
      * @returns {Promise<*>}
      */

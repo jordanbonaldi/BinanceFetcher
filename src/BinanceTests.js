@@ -7,7 +7,6 @@ class BinanceTests {
      */
     constructor(binanceAPI) {
         this.binanceAPI = binanceAPI;
-        console.log(this.binanceAPI);
     }
 
     /**
