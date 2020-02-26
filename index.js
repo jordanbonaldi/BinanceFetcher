@@ -1,0 +1,1 @@
+exports.binanceAPI = require('./src/BinanceAPI');

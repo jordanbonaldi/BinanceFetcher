@@ -1,3 +1,4 @@
 .idea
 binancefetcher.iml
 node_modules/
+package-lock.json
