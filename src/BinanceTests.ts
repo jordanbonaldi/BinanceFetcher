@@ -1,11 +1,17 @@
-const BinanceAPI = require('./BinanceAPI');
+import BinanceAPI from "./BinanceAPI";
+import {Ping} from "./models/Ping";
+import {CandleChartInterval, CandleChartResult, DailyStatsResult} from "binance-api-node";
+
 
 class BinanceTests {
+
+    private binanceAPI: BinanceAPI;
+
     /**
      *
      * @param binanceAPI
      */
-    constructor(binanceAPI) {
+    constructor(binanceAPI: BinanceAPI) {
         this.binanceAPI = binanceAPI;
     }
 
@@ -14,31 +20,25 @@ class BinanceTests {
      * @param _message
      * @returns {Error}
      */
-    error(_message) {
+    error(_message: string): Error {
         return new Error(_message);
     }
 
-    /**
-     *
-     * @returns {Promise<*>}
-     */
-    testUptime() {
-        return this.binanceAPI.getServerUptime().then(a => {
-            if (a.ping !== 'OK' || a.upTime == null)
+    testUptime(): Promise<Ping | Error> {
+        return this.binanceAPI.getServerUptime().then((ping: Ping) => {
+            if (ping.ping !== 'OK' || ping.upTime == null)
                 throw this.error(`Problem with server upTime ping KO`);
+
+            return ping;
         })
     }
 
-    /**
-     *
-     * @returns {Promise<*>}
-     */
-    testAssets() {
-        return this.binanceAPI.getAllSymbols().then((symbols) => {
+    testAssets(): Promise<unknown> {
+        return this.binanceAPI.getAllSymbols().then((symbols: any) => {
             if (symbols == null || symbols.length === 0)
                 throw this.error(`Error with all symbols call`);
 
-            return this.binanceAPI.getAllSymbols('BTC', 'USDT').then((_symbols) => {
+            return this.binanceAPI.getAllSymbols('BTC', 'USDT').then((_symbols: any) => {
                 if (Object.keys(_symbols).length !== 2)
                     throw this.error(`Error with specific symbols amount required: 2 got ${Object.keys(_symbols).length}`);
                 else if (_symbols['BTC'].length <= 10 || _symbols['USDT'].length <= 10)
@@ -68,10 +68,12 @@ class BinanceTests {
      * @param symbol
      * @returns {Promise<*>}
      */
-    testCandles(symbol = null){
-        return this.binanceAPI.getCandles(symbol == null ? "BTCUSDT" : symbol, "1m").then(symbol => {
-            if (symbol == null || symbol.length !== 1000)
-                throw this.error(`Amount of symbol expected: 1000, got ${symbol == null ? '0' : symbol.length}`)
+    testCandles(symbol: string | null = null): Promise<CandleChartResult[]>{
+        return this.binanceAPI.getCandles(symbol == null ? "BTCUSDT" : symbol, CandleChartInterval.ONE_MINUTE)
+            .then((symbols: CandleChartResult[]) => {
+                if (symbols == null || symbols.length !== 1000)
+                    throw this.error(`Amount of symbol expected: 1000, got ${symbols == null ? '0' : symbols.length}`);
+                return symbols;
         });
     }
 
@@ -80,10 +82,12 @@ class BinanceTests {
      * @param symbol
      * @returns {Promise<*>}
      */
-    testStats(symbol = null){
+    testStats(symbol: string | null = null): Promise<DailyStatsResult | DailyStatsResult[]> {
         return this.binanceAPI.getSymbolStats(symbol == null ? "BTCUSDT" : symbol).then(stats => {
             if (stats == null)
                 throw this.error(`Symbols Statistics is null`);
+
+            return stats;
         });
     }
 
@@ -110,4 +114,4 @@ class BinanceTests {
  * @param binanceAPI
  * @returns {Promise<string|null>}
  */
-module.exports = (binanceAPI) => new BinanceTests(binanceAPI).launchTest();
+export default function (binanceAPI: BinanceAPI) { return new BinanceTests(binanceAPI).launchTest() };

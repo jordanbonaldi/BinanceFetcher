@@ -1,5 +1,4 @@
-module.exports = {
-  intervalToNum: (interval) => {
+export function intervalToNum(interval: string): number {
         let charInterval = interval[interval.length - 1];
 
         let formula =
@@ -9,5 +8,4 @@ module.exports = {
             60 * 60 * 24 * 2;
 
         return parseInt(interval) * formula;
-  }
 };
