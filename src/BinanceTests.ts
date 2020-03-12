@@ -95,7 +95,7 @@ class BinanceTests {
      *
      * @returns {Promise<string|null>}
      */
-    launchTest() {
+    launchTest(): Promise<null | string> {
         return Promise.all([
             this.testUptime(),
             this.testAssets(),

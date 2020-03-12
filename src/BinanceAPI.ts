@@ -23,10 +23,12 @@ export default class BinanceAPI {
             apiKey: apiKey,
             apiSecret: apiSecret
         }) : binance_api_node();
+    }
 
-        BinanceTests(this).then((response) =>
+    public launch(): Promise<BinanceAPI> {
+        return BinanceTests(this).then((response) =>
             response == null ? process.exit(1) : console.log(`All tests passed on binance fetcher`)
-        );
+        ).then(() => this);
     }
 
     /**

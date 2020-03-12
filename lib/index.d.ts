@@ -10,7 +10,7 @@ export default function binanceAPI(apiKey?: string | null, apiSecret?: string | 
  *
  * @type {BinanceWorker}
  */
-export { BinanceWorker as binanceWorker, Worker as defaultWorker };
+export { BinanceWorker as binanceWorker, Worker as defaultWorker, BinanceAPI as BinanceAPI };
 /**
  *
  * @param interval

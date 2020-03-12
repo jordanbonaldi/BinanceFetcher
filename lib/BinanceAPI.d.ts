@@ -9,6 +9,7 @@ export default class BinanceAPI {
      * @param apiSecret
      */
     constructor(apiKey?: string | null, apiSecret?: string | null);
+    launch(): Promise<BinanceAPI>;
     /**
      *
      * @param binanceWorker
