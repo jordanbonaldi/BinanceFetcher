@@ -49,9 +49,11 @@ export default class BinanceAPI {
             if (symbols.length === 0)
                 return Object.keys(assets);
 
-            let assetsSymbols: any = [];
+            let assetsSymbols: string[] = [];
 
-            symbols.map((symbol: string) => assetsSymbols[symbol] = Object.keys(assets).filter((asset: string) => asset.includes(symbol)));
+            symbols.map((symbol: string) =>
+                Object.keys(assets).filter((asset: string) => asset.includes(symbol))
+            ).forEach((arrayOfAssets: string[]) => assetsSymbols.push(...arrayOfAssets));
 
             return assetsSymbols;
         });
@@ -67,7 +69,7 @@ export default class BinanceAPI {
      */
     getCandles(
         symbol: string = "BTCUSDT",
-        interval: CandleChartInterval = CandleChartInterval.THIRTY_MINUTES,
+        interval: CandleChartInterval | string | any = CandleChartInterval.THIRTY_MINUTES,
         limit: number = 1000,
         startTime: Date | null = null,
         endTime: Date | null = null

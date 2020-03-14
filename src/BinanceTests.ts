@@ -39,14 +39,8 @@ class BinanceTests {
                 throw this.error(`Error with all symbols call`);
 
             return this.binanceAPI.getAllSymbols('BTC', 'USDT').then((_symbols: any) => {
-                if (Object.keys(_symbols).length !== 2)
-                    throw this.error(`Error with specific symbols amount required: 2 got ${Object.keys(_symbols).length}`);
-                else if (_symbols['BTC'].length <= 10 || _symbols['USDT'].length <= 10)
-                    throw this.error(`Error with specific symbols ${
-                        _symbols['BTC'].length <= 10 ? 'BTC' : 'USDT'
-                    } amount lower than expected : ${
-                        _symbols['BTC'].length <= 10 ? _symbols['BTC'].length : _symbols['USDT'].length
-                    }`);
+                if (Object.keys(_symbols).length !== 326)
+                    throw this.error(`Error with specific symbols amount required: 326 got ${Object.keys(_symbols).length}`);
             }).then(() => {
                 /**
                  * We are checking 100 random assets since we can't test more than 100 per minutes.
