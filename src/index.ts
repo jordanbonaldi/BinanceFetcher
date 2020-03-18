@@ -5,6 +5,7 @@
 import BinanceAPI from "./BinanceAPI";
 import BinanceWorker from "./worker/BinanceWorker";
 import Worker from "./worker/Worker";
+import {CandleChartResult} from "binance-api-node";
 
 export default function binanceAPI(apiKey: string | null = null, apiSecret: string | null = null) {
     return new BinanceAPI(apiKey, apiSecret);
@@ -17,6 +18,7 @@ export default function binanceAPI(apiKey: string | null = null, apiSecret: stri
 export {
     BinanceWorker as binanceWorker,
     Worker as defaultWorker,
+    CandleChartResult as CandleChartResult,
     BinanceAPI as BinanceAPI
 }
 
