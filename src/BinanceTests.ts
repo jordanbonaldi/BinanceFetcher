@@ -1,6 +1,7 @@
 import BinanceAPI from "./BinanceAPI";
 import {Ping} from "./models/Ping";
 import {CandleChartInterval, CandleChartResult, DailyStatsResult} from "binance-api-node";
+import CandleModel from "./models/CandleModel";
 
 
 class BinanceTests {
@@ -62,9 +63,9 @@ class BinanceTests {
      * @param symbol
      * @returns {Promise<*>}
      */
-    testCandles(symbol: string | null = null): Promise<CandleChartResult[]>{
+    testCandles(symbol: string | null = null): Promise<CandleModel[]>{
         return this.binanceAPI.getCandles(symbol == null ? "BTCUSDT" : symbol, CandleChartInterval.ONE_MINUTE)
-            .then((symbols: CandleChartResult[]) => {
+            .then((symbols: CandleModel[]) => {
                 if (symbols == null || symbols.length !== 1000)
                     throw this.error(`Amount of symbol expected: 1000, got ${symbols == null ? '0' : symbols.length}`);
                 return symbols;

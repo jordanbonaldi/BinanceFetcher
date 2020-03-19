@@ -3,11 +3,16 @@ import binance_api_node, {
     CandleChartInterval,
     CandleChartResult,
     CandlesOptions,
-    DailyStatsResult
+    DailyStatsResult,
+    Candle
 } from "binance-api-node";
 import BinanceWorker from "./worker/BinanceWorker";
 import {Ping} from "./models/Ping";
 import BinanceTests from "./BinanceTests";
+import CandleModel from "./models/CandleModel";
+import {intervalToNum} from "./utils/Utils";
+
+const apiOverride = require('../api/BinanceSocket')();
 
 export default class BinanceAPI {
 
@@ -31,6 +36,17 @@ export default class BinanceAPI {
         ).then(() => this);
     }
 
+    socketWatcher(asset: string, period: string, slow: boolean, callback: (candles: CandleModel[]) => void): void {
+        let interval: number = intervalToNum(period);
+        let called: number = 0;
+
+        return apiOverride.websockets.chart(asset, period, (_symbol: string, _interval: string, chart: any) => {
+            if (slow && called++ % (interval / 2) !== 0) return;
+
+            callback(Object.keys(chart).map((key: string) => chart[key] as CandleModel))
+        })
+    }
+
     /**
      *
      * @param binanceWorker
@@ -44,7 +60,7 @@ export default class BinanceAPI {
      * @param symbols
      * @returns {Promise<*>}
      */
-    getAllSymbols(...symbols: string[]): Promise<{ [p: string]: string[] } | string[]> {
+    getAllSymbols(...symbols: string[]): Promise<string[]> {
         return this.binance['prices']().then((assets) => {
             if (symbols.length === 0)
                 return Object.keys(assets);
@@ -73,7 +89,7 @@ export default class BinanceAPI {
         limit: number = 1000,
         startTime: Date | null = null,
         endTime: Date | null = null
-    ): Promise<CandleChartResult[]> {
+    ): Promise<CandleModel[]> {
         let constructor: CandlesOptions = {
             symbol: symbol,
             interval: interval,
@@ -91,7 +107,17 @@ export default class BinanceAPI {
                 endTime: new Date(endTime).getTime()
             };
 
-        return this.binance['candles'](constructor);
+        return this.binance['candles'](constructor).then((candlesChart: CandleChartResult[]) =>
+            candlesChart.map(e => {
+                return {
+                    close: parseFloat(e.close),
+                    high: parseFloat(e.high),
+                    low: parseFloat(e.low),
+                    open: parseFloat(e.open),
+                    volume: parseFloat(e.volume)
+                } as CandleModel
+            })
+        );
     }
 
     /**
